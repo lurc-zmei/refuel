@@ -80,40 +80,20 @@ foreach ($cars as $id => $car) {
 
 
 		// необходимое количество топлива для заправки полного бака
-		$refuel = $car['fuel']['tank'] - $car['fuel']['rest']; 
+		$refuel = $car['fuel']['tank'] - $car['fuel']['rest'];
 
 
 		// сколько литров можем себе позволить
 		$refuel_possible = floor($car['wallet'] / $fuel[$car['fuel']['type']]['price']);
 		
 
-		/*
-		// стоимость топлива до полного бака
-		//$refuel_cost_tank = $refuel * $fuel[$car['fuel']['type']]['price'];
-
-		// остаток денег после покупки топлива
-		//$count_wallet = fmod($car['wallet'], $fuel[$car['fuel']['type']]['price']); 
-		*/
-
-
 		// если количество топлива мы можем себе позволить больше, чем нужно заправить
-		if($refuel_possible >= $refuel){
-	
-			// покупка топлива
-			$cars[$id]['wallet'] = $car['wallet'] - $refuel * $fuel[$car['fuel']['type']]['price'];
+		$refuel_result = $refuel_possible >= $refuel ? $refuel : $refuel_possible ;
+		// покупка топлива
+		$cars[$id]['wallet'] = $car['wallet'] - $refuel_result * $fuel[$car['fuel']['type']]['price'];
 
-			// Забираем нужное количество топлива из резервуара для заправки автомобиля
-			$fuel[$car['fuel']['type']]['rest'] -= $refuel;
-
-
-		} else {
-
-			// покупка ограниченного количества топлива
-			$cars[$id]['wallet'] = $car['wallet'] - $refuel_possible * $fuel[$car['fuel']['type']]['price'];
-
-			// Забираем нужное количество топлива из резервуара для заправки автомобиля
-			$fuel[$car['fuel']['type']]['rest'] -= $refuel_possible;
-		}
+		// Забираем нужное количество топлива из резервуара для заправки автомобиля
+		$fuel[$car['fuel']['type']]['rest'] -= $refuel_result;
 
 		// Отчет
 		echo "
