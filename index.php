@@ -89,13 +89,17 @@ foreach ($cars as $id => $car) {
 
 		// если количество топлива мы можем себе позволить больше, чем нужно заправить
 		$refuel_result = $refuel_possible >= $refuel ? $refuel : $refuel_possible ;
+		
 		// покупка топлива
-		$cars[$id]['wallet'] = $car['wallet'] - $refuel_result * $fuel[$car['fuel']['type']]['price'];
+		$refuel_price = $refuel_result * $fuel[$car['fuel']['type']]['price'];
+		$cars[$id]['wallet'] = $car['wallet'] - $refuel_price;
 
 		// Забираем нужное количество топлива из резервуара для заправки автомобиля
 		$fuel[$car['fuel']['type']]['rest'] -= $refuel_result;
 
 		// Отчет
+
+		/*
 		echo "
 		Тип топлива: ".$fuel[$car['fuel']['type']]['name']."
 		. Количество изнач: ".$fuel_count_before."
@@ -103,5 +107,45 @@ foreach ($cars as $id => $car) {
 		. Осталось в резервуаре: ".$fuel[$car['fuel']['type']]['rest']."
 		. Осталось денег:: ". $cars[$id]['wallet'] ."
 		<br>";
+		*/
+
+		$reports[] = [
+			'car_id' => $id, // автомобиль
+			'refuel_type' => $car['fuel']['type'], //тип топлива
+			'refuel' => $refuel_result, // заправлено топлива, литров
+			'refuel_price' => $refuel_price, // стоимость заправленного топлива
+		];
+	}
+}
+
+$report_label = [
+	'car_id' => 'Автомобиль',
+	'refuel_type' => 'Тип топлива',
+	'refuel' => 'Заправлено топлива, литров',
+	'refuel_price' => 'Стоимость заправленного топлива',
+];
+
+// dump(array_key_last($reports[0])); // последний ключ
+// dump($reports[0][array_key_last($reports[0])]); // последнее значение
+
+foreach($reports as $report) {
+	foreach($report as $label => $value) {
+
+		switch ($label) {
+			case 'car_id':
+				$value = $cars[$value]['name'];
+			break;
+
+			case 'refuel_type':
+				$value = $fuel[$value]['name'];
+			break;
+		}
+
+		echo "{$report_label[$label]}: {$value} <br>";
+		//dump(array_key_last($report));
+
+		if (array_key_last($report) == $label) {
+			echo "<br>";
+		}
 	}
 }
