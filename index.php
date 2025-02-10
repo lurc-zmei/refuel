@@ -11,7 +11,35 @@ function dump($data, $flag = "pr") {
 
 
 # Исходные данные
+$sqlConnect = mysqli_connect('localhost', 'root', '', 'refuel');
 
+$sqlQuery =  mysqli_query($sqlConnect, "SELECT * FROM `car`");
+
+while($row = mysqli_fetch_assoc($sqlQuery)){
+	// Группировка данных о топливе под новым ключем 
+	$row['fuel'] = [
+		'type' => $row['fuel_id'],
+		'tank' => $row['fuel_tank'],
+		'rest' => $row['fuel_rest'],
+	];
+	unset($row['fuel_id'], $row['fuel_tank'], $row['fuel_rest']);
+
+	// 
+	$cars[$row['id']] = $row;
+}
+
+dump($cars);
+
+
+
+$sqlQuery =  mysqli_query($sqlConnect, "SELECT * FROM `fuel`");
+while($row = mysqli_fetch_assoc($sqlQuery)){
+	$fuel[$row['id']] = $row; // Готовые данные, с которыми мы работаем дальше в коде
+}
+
+//dump($fuel);
+
+/*
 // Резервуары с топливом
 $fuel = [
 	1 => [
@@ -67,8 +95,9 @@ $cars = [
 		],
 	],
 ];
+*/
 
-
+die();
 # Заправка
 foreach ($cars as $id => $car) {
 
