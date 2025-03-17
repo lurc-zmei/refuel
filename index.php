@@ -9,12 +9,12 @@ function dump($data, $flag = "pr") {
 	echo "</pre>";
 }
 
-
-# Исходные данные
 $sqlConnect = mysqli_connect('localhost', 'root', '', 'refuel');
 
-$sqlQuery =  mysqli_query($sqlConnect, "SELECT * FROM `car`");
+# Исходные данные
 
+// Автомобиль
+$sqlQuery =  mysqli_query($sqlConnect, "SELECT * FROM `car`");
 while($row = mysqli_fetch_assoc($sqlQuery)){
 	// Группировка данных о топливе под новым ключем 
 	$row['fuel'] = [
@@ -25,79 +25,23 @@ while($row = mysqli_fetch_assoc($sqlQuery)){
 	unset($row['fuel_id'], $row['fuel_tank'], $row['fuel_rest']);
 
 	// 
-	$cars[$row['id']] = $row;
+	$cars[$row['id']] = $row; // Готовые данные, с которыми мы работаем дальше в коде
 }
 
-dump($cars);
-
-
-
+// Топливо
 $sqlQuery =  mysqli_query($sqlConnect, "SELECT * FROM `fuel`");
 while($row = mysqli_fetch_assoc($sqlQuery)){
 	$fuel[$row['id']] = $row; // Готовые данные, с которыми мы работаем дальше в коде
 }
 
-//dump($fuel);
-
-/*
-// Резервуары с топливом
-$fuel = [
-	1 => [
-		'id' => 1,
-		'name' => "benzin",
-		'rest' => 500, // остаток топлива в резервуаре
-		'price' => 7, // цена за единицу топлива
-	],
-	2 => [
-		'id' => 2,
-		'name' => "solyarka",
-		'rest' => 400,
-		'price' => 5.30,
-	],
-	3 => [
-		'id' => 3,
-		'name' => "diesel",
-		'rest' => 450,
-		'price' => 4,
-	],
+// Метки для отчета
+$report_label = [
+	'car_id' => 'Автомобиль',
+	'refuel_type' => 'Тип топлива',
+	'refuel' => 'Заправлено топлива, литров',
+	'refuel_price' => 'Стоимость заправленного топлива',
 ];
 
-// Автомобили, посетившие заправку
-$cars = [
-	23 => [
-		'id' => 23,
-		'name' => 'nissan',
-		'wallet' => 527, // количество денег на заправку
-		'fuel' => [
-			'type' => 1, // "внешний ключ" для массива с резервуарами
-			'tank' => 100, // объем бензобака
-			'rest' => 30, // остаток топлива
-		],
-	],
-	24 => [
-		'id' => 24,
-		'name' => 'renault',
-		'wallet' => 200,
-		'fuel' => [
-			'type' => 2,
-			'tank' => 80,
-			'rest' => 20,
-		],
-	],
-	25 => [
-		'id' => 25,
-		'name' => 'honda',
-		'wallet' => 158,
-		'fuel' => [
-			'type' => 3,
-			'tank' => 110,
-			'rest' => 50,
-		],
-	],
-];
-*/
-
-die();
 # Заправка
 foreach ($cars as $id => $car) {
 
@@ -127,17 +71,6 @@ foreach ($cars as $id => $car) {
 		$fuel[$car['fuel']['type']]['rest'] -= $refuel_result;
 
 		// Отчет
-
-		/*
-		echo "
-		Тип топлива: ".$fuel[$car['fuel']['type']]['name']."
-		. Количество изнач: ".$fuel_count_before."
-		. Было дозаправлено: ".$fuel_count_before - $fuel[$car['fuel']['type']]['rest']."
-		. Осталось в резервуаре: ".$fuel[$car['fuel']['type']]['rest']."
-		. Осталось денег:: ". $cars[$id]['wallet'] ."
-		<br>";
-		*/
-
 		$reports[] = [
 			'car_id' => $id, // автомобиль
 			'refuel_type' => $car['fuel']['type'], //тип топлива
@@ -147,27 +80,13 @@ foreach ($cars as $id => $car) {
 	}
 }
 
-$report_label = [
-	'car_id' => 'Автомобиль',
-	'refuel_type' => 'Тип топлива',
-	'refuel' => 'Заправлено топлива, литров',
-	'refuel_price' => 'Стоимость заправленного топлива',
-];
-
-// dump(array_key_last($reports[0])); // последний ключ
-// dump($reports[0][array_key_last($reports[0])]); // последнее значение
-
+# Вывод отчета
 foreach($reports as $report) {
 	foreach($report as $label => $value) {
 
 		switch ($label) {
-			case 'car_id':
-				$value = $cars[$value]['name'];
-			break;
-
-			case 'refuel_type':
-				$value = $fuel[$value]['name'];
-			break;
+			case 'car_id': $value = $cars[$value]['name']; break;
+			case 'refuel_type': $value = $fuel[$value]['name']; break;
 		}
 
 		echo "{$report_label[$label]}: {$value} <br>";
