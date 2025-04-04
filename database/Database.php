@@ -5,8 +5,9 @@ class Database
 
 	private $connect;
 
-	public function __construct($name, $server = 'localhost', $user = 'root', $password = '') {
-		$this->connect = mysqli_connect($server, $user, $password, $name);
+	//public function __construct($name, $server = 'localhost', $user = 'root', $password = '') {
+	public function __construct($db) {
+		$this->connect = mysqli_connect($db['HOST'], $db['USERNAME'], $db['PASSWORD'], $db['DATABASE']);
 	}
 
 
