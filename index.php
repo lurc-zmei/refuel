@@ -2,7 +2,9 @@
 //preg_match_all("/.{3,5}\.php/", 'index.php car.php', $matches);
 //print_r($matches);
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/bootstrap/App.php';
+require_once "vendor/autoload.php";
+//require_once $_SERVER['DOCUMENT_ROOT'].'/bootstrap/App.php';
+use Bootstrap\App;
 
 // SELECT * FROM `car`
 //dump($APP['db']->query('SELECT * FROM `car`'));
@@ -28,4 +30,8 @@ $newFuel = [
 //dump($APP['car']->update(12, ['name' => 'volvo']), 'vd');
 //dump($APP);
 //dump($APP['Car']->read());
-dump($APP['Fuel']->read());
+//dump($APP['Fuel']->read());
+$app = new App();
+//dump($app->message('test'));
+//dump($APP);
+dump($APP['db']->read('car'));

@@ -1,5 +1,8 @@
 <?php
 
+namespace App\Models;
+
+
 class Car extends Model {
     protected $tableName = __CLASS__;
 //    public function create($fieldList) {
